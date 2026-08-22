@@ -1,121 +1,132 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
+import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom'
+import { authAPI } from './services/api'
 import './App.css'
 
-function App() {
-  const [count, setCount] = useState(0)
+function Login() {
+  const navigate = useNavigate()
+
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
+
+  const handleLogin = async (event) => {
+    event.preventDefault()
+
+    setError('')
+    setLoading(true)
+
+    try {
+      const data = await authAPI.login(email, password)
+
+      localStorage.setItem('dayflow_token', data.token)
+      localStorage.setItem('dayflow_user', JSON.stringify(data.user))
+
+      if (data.user.role === 'admin') {
+        navigate('/admin')
+      } else {
+        navigate('/dashboard')
+      }
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
+    <div className="login-page">
+      <div className="login-card">
+        <div className="brand">
+          <div className="brand-icon">D</div>
+          <div>
+            <h1>DayFlow</h1>
+            <p>Every workday, perfectly aligned.</p>
+          </div>
         </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
 
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
+        <div className="login-header">
+          <h2>Welcome back</h2>
+          <p>Sign in to continue to your workspace.</p>
         </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+        {error && <div className="error-message">{error}</div>}
+
+        <form onSubmit={handleLogin}>
+          <div className="form-group">
+            <label htmlFor="email">Email</label>
+            <input
+              id="email"
+              type="email"
+              placeholder="you@company.com"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="password">Password</label>
+            <input
+              id="password"
+              type="password"
+              placeholder="Enter your password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              required
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="primary-button"
+            disabled={loading}
+          >
+            {loading ? 'Signing in...' : 'Sign In'}
+          </button>
+        </form>
+
+        <p className="signup-text">
+          Don't have an account? <span>Sign up</span>
+        </p>
+      </div>
+    </div>
+  )
+}
+
+function EmployeeDashboard() {
+  const user = JSON.parse(localStorage.getItem('dayflow_user') || '{}')
+
+  return (
+    <div style={{ padding: '40px' }}>
+      <h1>Welcome, {user.name || 'Employee'} 👋</h1>
+      <p>Employee Dashboard</p>
+    </div>
+  )
+}
+
+function AdminDashboard() {
+  const user = JSON.parse(localStorage.getItem('dayflow_user') || '{}')
+
+  return (
+    <div style={{ padding: '40px' }}>
+      <h1>Welcome, {user.name || 'Admin'} 👋</h1>
+      <p>Admin / HR Dashboard</p>
+    </div>
+  )
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/dashboard" element={<EmployeeDashboard />} />
+        <Route path="/admin" element={<AdminDashboard />} />
+      </Routes>
+    </BrowserRouter>
   )
 }
 
