@@ -19,7 +19,7 @@ async function checkIn(req, res) {
     const date = todayStr();
 
     const existing = await db.get(
-      "SELECT * FROM attendance WHERE user_id = ? AND attendance_date = ?",
+      "SELECT * FROM attendance WHERE user_id = ? AND date = ?",
       [req.user.id, date]
     );
 
@@ -34,8 +34,8 @@ async function checkIn(req, res) {
 
     const result = await db.run(
       `INSERT INTO attendance
-       (user_id, attendance_date, check_in, status)
-       VALUES (?, ?, ?, 'Present')`,
+       (user_id, date, check_in, status)
+       VALUES (?, ?, ?, 'present')`,
       [req.user.id, date, now]
     );
 
@@ -44,10 +44,10 @@ async function checkIn(req, res) {
       attendance: {
         id: result.lastID,
         user_id: req.user.id,
-        attendance_date: date,
+        date: date,
         check_in: now,
         check_out: null,
-        status: "Present",
+        status: "present",
       },
     });
   } catch (err) {
@@ -63,7 +63,7 @@ async function checkOut(req, res) {
     const date = todayStr();
 
     const existing = await db.get(
-      "SELECT * FROM attendance WHERE user_id = ? AND attendance_date = ?",
+      "SELECT * FROM attendance WHERE user_id = ? AND date = ?",
       [req.user.id, date]
     );
 
@@ -85,7 +85,7 @@ async function checkOut(req, res) {
       (new Date(now) - new Date(existing.check_in)) /
       (1000 * 60 * 60);
 
-    const status = hoursWorked < 4 ? "Half-Day" : "Present";
+    const status = hoursWorked < 4 ? "half-day" : "present";
 
     await db.run(
       "UPDATE attendance SET check_out = ?, status = ? WHERE id = ?",
@@ -116,12 +116,12 @@ async function getMyAttendance(req, res) {
 
     if (range === "daily") {
       rows = await db.all(
-        "SELECT * FROM attendance WHERE user_id = ? AND attendance_date = ?",
+        "SELECT * FROM attendance WHERE user_id = ? AND date = ?",
         [req.user.id, todayStr()]
       );
     } else {
       rows = await db.all(
-        "SELECT * FROM attendance WHERE user_id = ? AND attendance_date >= ? ORDER BY attendance_date DESC",
+        "SELECT * FROM attendance WHERE user_id = ? AND date >= ? ORDER BY date DESC",
         [req.user.id, daysAgoStr(7)]
       );
     }
@@ -146,7 +146,7 @@ async function getAllAttendance(req, res) {
       `SELECT a.*, u.name, u.employee_id
        FROM attendance a
        JOIN users u ON u.id = a.user_id
-       WHERE a.attendance_date = ?
+       WHERE a.date = ?
        ORDER BY u.name ASC`,
       [date]
     );
@@ -172,12 +172,12 @@ async function getAttendanceByUser(req, res) {
 
     if (range === "daily") {
       rows = await db.all(
-        "SELECT * FROM attendance WHERE user_id = ? AND attendance_date = ?",
+        "SELECT * FROM attendance WHERE user_id = ? AND date = ?",
         [userId, todayStr()]
       );
     } else {
       rows = await db.all(
-        "SELECT * FROM attendance WHERE user_id = ? AND attendance_date >= ? ORDER BY attendance_date DESC",
+        "SELECT * FROM attendance WHERE user_id = ? AND date >= ? ORDER BY date DESC",
         [userId, daysAgoStr(7)]
       );
     }
@@ -198,10 +198,10 @@ async function updateAttendanceStatus(req, res) {
     const { date, status } = req.body;
 
     const validStatuses = [
-      "Present",
-      "Absent",
-      "Late",
-      "Half-Day",
+      "present",
+      "absent",
+      "half-day",
+      "leave",
     ];
 
     if (!date || !status || !validStatuses.includes(status)) {
@@ -216,36 +216,6 @@ async function updateAttendanceStatus(req, res) {
     const userId = req.params.userId;
 
     const existing = await db.get(
-      "SELECT * FROM attendance WHERE user_id = ? AND attendance_date = ?",
+      "SELECT * FROM attendance WHERE user_id = ? AND date = ?",
       [userId, date]
     );
-
-    if (existing) {
-      await db.run(
-        "UPDATE attendance SET status = ? WHERE id = ?",
-        [status, existing.id]
-      );
-    } else {
-      await db.run(
-        "INSERT INTO attendance (user_id, attendance_date, status) VALUES (?, ?, ?)",
-        [userId, date, status]
-      );
-    }
-
-    return res.status(200).json({
-      message: "Attendance status updated.",
-    });
-  } catch (err) {
-    console.error("Update attendance status error:", err);
-    return res.status(500).json({ message: "Something went wrong." });
-  }
-}
-
-module.exports = {
-  checkIn,
-  checkOut,
-  getMyAttendance,
-  getAllAttendance,
-  getAttendanceByUser,
-  updateAttendanceStatus,
-};
