@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+
 const {
   applyLeave,
   getMyLeaveRequests,
@@ -7,6 +8,7 @@ const {
   approveLeave,
   rejectLeave,
 } = require("../controllers/leave.controller");
+
 const protect = require("../middleware/auth.middleware");
 const allowRoles = require("../middleware/role.middleware");
 

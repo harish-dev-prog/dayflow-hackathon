@@ -26,6 +26,10 @@ async function request(endpoint, options = {}) {
   return data;
 }
 
+/* =========================
+   AUTH
+========================= */
+
 export const authAPI = {
   login: (email, password) =>
     request('/auth/login', {
@@ -42,6 +46,10 @@ export const authAPI = {
   me: () => request('/auth/me'),
 };
 
+/* =========================
+   PROFILE
+========================= */
+
 export const profileAPI = {
   getMe: () => request('/profile/me'),
 
@@ -51,6 +59,10 @@ export const profileAPI = {
       body: JSON.stringify(data),
     }),
 };
+
+/* =========================
+   ATTENDANCE
+========================= */
 
 export const attendanceAPI = {
   checkIn: () =>
@@ -67,6 +79,10 @@ export const attendanceAPI = {
     request(`/attendance/me?range=${range}`),
 };
 
+/* =========================
+   LEAVE - EMPLOYEE
+========================= */
+
 export const leaveAPI = {
   apply: (data) =>
     request('/leave/apply', {
@@ -77,35 +93,64 @@ export const leaveAPI = {
   getMe: () => request('/leave/me'),
 };
 
+/* =========================
+   PAYROLL
+========================= */
+
 export const payrollAPI = {
   getMe: () => request('/payroll/me'),
 };
 
+/* =========================
+   ADMIN - EMPLOYEES
+========================= */
+
 export const adminAPI = {
-  getEmployees: () => request('/admin/employees'),
+  getEmployees: () =>
+    request('/admin/employees'),
+};
 
-  getAttendance: (date) =>
-    request(`/attendance/all?date=${date}`),
+/* =========================
+   ADMIN - LEAVES
+========================= */
 
-  getLeaves: (status = 'pending') =>
-    request(`/leave/all?status=${status}`),
+export const adminLeaveAPI = {
+  getAll: (status = '') =>
+    request(`/leave/all${status ? `?status=${status}` : ''}`),
 
-  approveLeave: (id, admin_comment = '') =>
+  approve: (id, admin_comment = '') =>
     request(`/leave/${id}/approve`, {
       method: 'PATCH',
       body: JSON.stringify({ admin_comment }),
     }),
 
-  rejectLeave: (id, admin_comment = '') =>
+  reject: (id, admin_comment = '') =>
     request(`/leave/${id}/reject`, {
       method: 'PATCH',
       body: JSON.stringify({ admin_comment }),
     }),
+};
 
-  getPayroll: () =>
+/* =========================
+   ADMIN - ATTENDANCE
+========================= */
+
+export const adminAttendanceAPI = {
+  getAll: (date = '') =>
+    request(`/attendance/all${date ? `?date=${date}` : ''}`),
+
+  updateStatus: (userId, date, status) =>
+    request(`/attendance/${userId}/status`, {
+      method: 'PATCH',
+      body: JSON.stringify({ date, status }),
+    }),
+};
+
+/* =========================
+   ADMIN - PAYROLL
+========================= */
+
+export const adminPayrollAPI = {
+  getAll: () =>
     request('/payroll/all'),
-}
-
-export const adminAPI = {
-  getEmployees: () => request('/admin/employees'),
 };
