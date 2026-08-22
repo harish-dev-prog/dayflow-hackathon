@@ -15,6 +15,7 @@ import Profile from './pages/Profile'
 import AdminDashboard from './pages/AdminDashboard'
 import Reports from './pages/Reports'
 import Signup from './pages/Signup'
+import Attendance from './pages/Attendance'
 import './App.css'
  
 function Login() {
@@ -151,6 +152,10 @@ function EmployeeLayout({ children }) {
           Dashboard
         </Link>
  
+        <Link to="/attendance">
+          Attendance
+        </Link>
+ 
         <Link to="/leave">
           Leave
         </Link>
@@ -276,6 +281,25 @@ function App() {
         />
  
  
+        {/* ATTENDANCE */}
+ 
+        <Route
+          path="/attendance"
+          element={
+            token ? (
+              <EmployeeLayout>
+                <Attendance />
+              </EmployeeLayout>
+            ) : (
+              <Navigate
+                to="/login"
+                replace
+              />
+            )
+          }
+        />
+ 
+ 
         {/* LEAVE */}
  
         <Route
@@ -367,3 +391,4 @@ function App() {
 }
  
 export default App
+ 
