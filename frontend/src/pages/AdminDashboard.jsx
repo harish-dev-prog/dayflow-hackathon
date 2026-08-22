@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import {
   adminAPI,
   adminLeaveAPI,
@@ -158,10 +159,16 @@ function AdminDashboard() {
           </p>
         </div>
 
+        <Link
+          to="/admin/reports"
+          style={{ marginLeft: 'auto', marginRight: '20px' }}
+        >
+          Reports
+        </Link>
+
         <button
           onClick={logout}
           style={{
-            marginLeft: 'auto',
             padding: '10px 18px',
             border: 'none',
             borderRadius: '6px',
