@@ -11,6 +11,7 @@ import {
 import { authAPI } from './services/api'
 import EmployeeDashboard from './pages/EmployeeDashboard'
 import Leave from './pages/Leave'
+import AdminDashboard from './pages/AdminDashboard'
 import './App.css'
 
 function Login() {
@@ -48,6 +49,7 @@ function Login() {
   return (
     <div className="login-page">
       <div className="login-card">
+
         <div className="brand">
           <div className="brand-icon">D</div>
           <div>
@@ -61,11 +63,17 @@ function Login() {
           <p>Sign in to continue to your workspace.</p>
         </div>
 
-        {error && <div className="error-message">{error}</div>}
+        {error && (
+          <div className="error-message">
+            {error}
+          </div>
+        )}
 
         <form onSubmit={handleLogin}>
+
           <div className="form-group">
             <label htmlFor="email">Email</label>
+
             <input
               id="email"
               type="email"
@@ -78,6 +86,7 @@ function Login() {
 
           <div className="form-group">
             <label htmlFor="password">Password</label>
+
             <input
               id="password"
               type="password"
@@ -95,82 +104,14 @@ function Login() {
           >
             {loading ? 'Signing in...' : 'Sign In'}
           </button>
+
         </form>
+
       </div>
     </div>
   )
 }
 
-/* =========================
-   ADMIN DASHBOARD
-========================= */
-
-function AdminDashboard() {
-  const navigate = useNavigate()
-  const user = JSON.parse(localStorage.getItem('dayflow_user') || '{}')
-
-  const logout = () => {
-    localStorage.removeItem('dayflow_token')
-    localStorage.removeItem('dayflow_user')
-    navigate('/login')
-  }
-
-  return (
-    <div className="dashboard">
-      <header className="dashboard-header">
-        <div>
-          <h1>DayFlow</h1>
-          <p>Admin / HR Dashboard</p>
-        </div>
-
-        <button className="logout-button" onClick={logout}>
-          Logout
-        </button>
-      </header>
-
-      <main className="dashboard-content">
-        <section className="welcome">
-          <h2>Welcome, {user.name || 'Admin'} 👋</h2>
-          <p>Manage your workforce from one place.</p>
-        </section>
-
-        <section className="dashboard-grid">
-          <div className="dashboard-card">
-            <h3>Employees</h3>
-            <p>Manage employee profiles and details.</p>
-            <button className="primary-button">
-              View Employees
-            </button>
-          </div>
-
-          <div className="dashboard-card">
-            <h3>Attendance</h3>
-            <p>View employee attendance records.</p>
-            <button className="primary-button">
-              View Attendance
-            </button>
-          </div>
-
-          <div className="dashboard-card">
-            <h3>Leave Requests</h3>
-            <p>Review and approve employee leave.</p>
-            <Link to="/leave" className="primary-button">
-              Manage Leave
-            </Link>
-          </div>
-
-          <div className="dashboard-card">
-            <h3>Payroll</h3>
-            <p>View and manage salary information.</p>
-            <button className="primary-button">
-              View Payroll
-            </button>
-          </div>
-        </section>
-      </main>
-    </div>
-  )
-}
 
 /* =========================
    EMPLOYEE NAVIGATION
@@ -196,10 +137,16 @@ function EmployeeLayout({ children }) {
           alignItems: 'center',
         }}
       >
+
         <strong>DayFlow</strong>
 
-        <Link to="/dashboard">Dashboard</Link>
-        <Link to="/leave">Leave</Link>
+        <Link to="/dashboard">
+          Dashboard
+        </Link>
+
+        <Link to="/leave">
+          Leave
+        </Link>
 
         <button
           onClick={logout}
@@ -207,6 +154,7 @@ function EmployeeLayout({ children }) {
         >
           Logout
         </button>
+
       </nav>
 
       {children}
@@ -214,40 +162,71 @@ function EmployeeLayout({ children }) {
   )
 }
 
+
 /* =========================
-   ROUTES
+   APP + ROUTES
 ========================= */
 
 function App() {
+
   const token = localStorage.getItem('dayflow_token')
+
   const user = JSON.parse(
     localStorage.getItem('dayflow_user') || '{}'
   )
 
   return (
     <BrowserRouter>
+
       <Routes>
 
-        {/* Login */}
+        {/* HOME */}
+
         <Route
           path="/"
           element={
-            token
-              ? <Navigate to={user.role === 'admin' ? '/admin' : '/dashboard'} replace />
-              : <Navigate to="/login" replace />
+            token ? (
+              <Navigate
+                to={
+                  user.role === 'admin'
+                    ? '/admin'
+                    : '/dashboard'
+                }
+                replace
+              />
+            ) : (
+              <Navigate
+                to="/login"
+                replace
+              />
+            )
           }
         />
+
+
+        {/* LOGIN */}
 
         <Route
           path="/login"
           element={
-            token
-              ? <Navigate to={user.role === 'admin' ? '/admin' : '/dashboard'} replace />
-              : <Login />
+            token ? (
+              <Navigate
+                to={
+                  user.role === 'admin'
+                    ? '/admin'
+                    : '/dashboard'
+                }
+                replace
+              />
+            ) : (
+              <Login />
+            )
           }
         />
 
-        {/* Employee Dashboard */}
+
+        {/* EMPLOYEE DASHBOARD */}
+
         <Route
           path="/dashboard"
           element={
@@ -256,12 +235,17 @@ function App() {
                 <EmployeeDashboard />
               </EmployeeLayout>
             ) : (
-              <Navigate to="/login" replace />
+              <Navigate
+                to="/login"
+                replace
+              />
             )
           }
         />
 
-        {/* Leave */}
+
+        {/* LEAVE */}
+
         <Route
           path="/leave"
           element={
@@ -270,30 +254,46 @@ function App() {
                 <Leave />
               </EmployeeLayout>
             ) : (
-              <Navigate to="/login" replace />
+              <Navigate
+                to="/login"
+                replace
+              />
             )
           }
         />
 
-        {/* Admin */}
+
+        {/* ADMIN DASHBOARD */}
+
         <Route
           path="/admin"
           element={
             token && user.role === 'admin' ? (
               <AdminDashboard />
             ) : (
-              <Navigate to="/login" replace />
+              <Navigate
+                to="/login"
+                replace
+              />
             )
           }
         />
 
-        {/* Anything unknown */}
+
+        {/* UNKNOWN ROUTES */}
+
         <Route
           path="*"
-          element={<Navigate to="/login" replace />}
+          element={
+            <Navigate
+              to="/login"
+              replace
+            />
+          }
         />
 
       </Routes>
+
     </BrowserRouter>
   )
 }
