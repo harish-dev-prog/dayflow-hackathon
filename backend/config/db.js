@@ -1,20 +1,20 @@
 const sqlite3 = require("sqlite3").verbose();
 const { open } = require("sqlite");
 require("dotenv").config();
-
+ 
 let dbInstance = null;
-
+ 
 async function connectDB() {
   if (dbInstance) return dbInstance;
-
+ 
   dbInstance = await open({
     filename: process.env.DB_PATH || "./dayflow.sqlite",
     driver: sqlite3.Database,
   });
-
+ 
   // Foreign keys must be turned on explicitly in SQLite
   await dbInstance.exec("PRAGMA foreign_keys = ON;");
-
+ 
   await dbInstance.exec(`
     CREATE TABLE IF NOT EXISTS users (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -27,35 +27,43 @@ async function connectDB() {
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
   `);
-
+ 
+  // Safe, idempotent: add verification_token column if it doesn't exist yet
+  // (won't error out on a fresh DB where the column already exists via future schema changes)
+  try {
+    await dbInstance.exec(`ALTER TABLE users ADD COLUMN verification_token TEXT;`);
+  } catch (e) {
+    // Column already exists - ignore
+  }
+ 
   await dbInstance.exec(`
     CREATE TABLE IF NOT EXISTS profiles (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       user_id INTEGER UNIQUE NOT NULL,
-
+ 
       -- Personal details (employee can edit)
       phone TEXT,
       address TEXT,
       profile_picture TEXT,
-
+ 
       -- Job details (admin only)
       department TEXT,
       designation TEXT,
       date_of_joining TEXT,
-
+ 
       -- Salary structure (admin only, employee views read-only via /me)
       basic_salary REAL DEFAULT 0,
       allowances REAL DEFAULT 0,
       deductions REAL DEFAULT 0,
-
+ 
       -- Documents (admin only) - comma-separated file names/URLs for hackathon scope
       documents TEXT,
-
+ 
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
     );
   `);
-
+ 
   await dbInstance.exec(`
     CREATE TABLE IF NOT EXISTS attendance (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -69,7 +77,7 @@ async function connectDB() {
       UNIQUE(user_id, date)
     );
   `);
-
+ 
   await dbInstance.exec(`
     CREATE TABLE IF NOT EXISTS leave_requests (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -85,9 +93,7 @@ async function connectDB() {
       FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
     );
   `);
-
+ 
   console.log("Connected to SQLite and ensured users + profiles + attendance + leave_requests tables exist");
   return dbInstance;
 }
-
-module.exports = connectDB;
