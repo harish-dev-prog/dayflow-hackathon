@@ -127,6 +127,19 @@ async function login(req, res) {
       return res.status(401).json({ message: "Invalid email or password." });
     }
  
+    // Legacy/seeded users may have is_verified stored as null instead of 0/1
+    // (older schema before verification existed). Treat null the same as
+    // verified so existing test accounts are never locked out by this change.
+    const isVerified = user.is_verified === null || user.is_verified === undefined
+      ? true
+      : Boolean(user.is_verified);
+ 
+    if (!isVerified) {
+      return res.status(403).json({
+        message: "Please verify your email before logging in.",
+      });
+    }
+ 
     const token = generateToken(user);
  
     return res.status(200).json({
@@ -161,3 +174,6 @@ async function getMe(req, res) {
     return res.status(500).json({ message: "Something went wrong." });
   }
 }
+ 
+module.exports = { signup, login, getMe, verifyEmail };
+ 
