@@ -6,11 +6,11 @@ import {
   leaveAPI,
   payrollAPI,
 } from '../services/api'
-
+ 
 function EmployeeDashboard() {
   const navigate = useNavigate()
   const user = JSON.parse(localStorage.getItem('dayflow_user') || '{}')
-
+ 
   const [profile, setProfile] = useState(null)
   const [attendance, setAttendance] = useState([])
   const [leaves, setLeaves] = useState([])
@@ -18,7 +18,7 @@ function EmployeeDashboard() {
   const [loading, setLoading] = useState(true)
   const [attendanceLoading, setAttendanceLoading] = useState(false)
   const [message, setMessage] = useState('')
-
+ 
   const loadDashboard = async () => {
     try {
       const [profileData, attendanceData, leaveData, payrollData] =
@@ -28,7 +28,7 @@ function EmployeeDashboard() {
           leaveAPI.getMe(),
           payrollAPI.getMe(),
         ])
-
+ 
       setProfile(profileData)
       setAttendance(attendanceData.attendance || [])
       setLeaves(leaveData.leave_requests || leaveData.leaves || [])
@@ -39,15 +39,15 @@ function EmployeeDashboard() {
       setLoading(false)
     }
   }
-
+ 
   useEffect(() => {
     loadDashboard()
   }, [])
-
+ 
   const checkIn = async () => {
     setAttendanceLoading(true)
     setMessage('')
-
+ 
     try {
       await attendanceAPI.checkIn()
       setMessage('Checked in successfully! ✅')
@@ -58,11 +58,11 @@ function EmployeeDashboard() {
       setAttendanceLoading(false)
     }
   }
-
+ 
   const checkOut = async () => {
     setAttendanceLoading(true)
     setMessage('')
-
+ 
     try {
       await attendanceAPI.checkOut()
       setMessage('Checked out successfully! ✅')
@@ -73,17 +73,17 @@ function EmployeeDashboard() {
       setAttendanceLoading(false)
     }
   }
-
+ 
   const logout = () => {
     localStorage.removeItem('dayflow_token')
     localStorage.removeItem('dayflow_user')
     navigate('/login')
   }
-
+ 
   if (loading) {
     return <div className="dashboard-loading">Loading DayFlow...</div>
   }
-
+ 
   return (
     <div className="dashboard">
       <header className="dashboard-header">
@@ -91,30 +91,30 @@ function EmployeeDashboard() {
           <h1>DayFlow</h1>
           <p>Employee Dashboard</p>
         </div>
-
+ 
         <button className="logout-button" onClick={logout}>
           Logout
         </button>
       </header>
-
+ 
       <main className="dashboard-content">
         <section className="welcome">
           <h2>Good to see you, {user.name || 'Employee'} 👋</h2>
           <p>Here's your workday overview.</p>
         </section>
-
+ 
         {message && (
           <div className="dashboard-message">
             {message}
           </div>
         )}
-
+ 
         <section className="attendance-actions">
           <div>
             <h3>Today's Attendance</h3>
             <p>Record your workday.</p>
           </div>
-
+ 
           <div className="attendance-buttons">
             <button
               className="checkin-button"
@@ -123,7 +123,7 @@ function EmployeeDashboard() {
             >
               {attendanceLoading ? 'Processing...' : 'Check In'}
             </button>
-
+ 
             <button
               className="checkout-button"
               onClick={checkOut}
@@ -133,26 +133,26 @@ function EmployeeDashboard() {
             </button>
           </div>
         </section>
-
+ 
         <section className="dashboard-grid">
           <div className="dashboard-card">
             <h3>Profile</h3>
             <p>{profile?.designation || 'Employee'}</p>
             <p>{profile?.department || 'Department not assigned'}</p>
           </div>
-
+ 
           <div className="dashboard-card">
             <h3>Attendance</h3>
             <p className="card-number">{attendance.length}</p>
             <span>records this week</span>
           </div>
-
+ 
           <div className="dashboard-card">
             <h3>Leave Requests</h3>
             <p className="card-number">{leaves.length}</p>
             <span>total requests</span>
           </div>
-
+ 
           <div className="dashboard-card">
             <h3>Salary</h3>
             <p className="salary">
@@ -161,13 +161,15 @@ function EmployeeDashboard() {
             <span>net salary</span>
           </div>
         </section>
-
+ 
         <section className="dashboard-section">
           <h2>Quick Actions</h2>
-
+ 
           <div className="actions">
-            <button>View Profile</button>
-
+            <Link to="/profile" className="action-link">
+              View Profile
+            </Link>
+ 
             <button
               onClick={() => {
                 document
@@ -177,11 +179,11 @@ function EmployeeDashboard() {
             >
               Attendance
             </button>
-
+ 
             <Link to="/leave" className="action-link">
               Apply Leave
             </Link>
-
+ 
             <button>View Salary</button>
           </div>
         </section>
@@ -189,5 +191,5 @@ function EmployeeDashboard() {
     </div>
   )
 }
-
+ 
 export default EmployeeDashboard

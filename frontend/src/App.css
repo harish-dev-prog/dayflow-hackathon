@@ -1,7 +1,7 @@
 #root {
   min-height: 100vh;
 }
-
+ 
 .login-page {
   min-height: 100vh;
   display: flex;
@@ -10,7 +10,7 @@
   padding: 24px;
   background: #f5f7fb;
 }
-
+ 
 .login-card {
   width: 100%;
   max-width: 430px;
@@ -20,14 +20,14 @@
   border-radius: 20px;
   box-shadow: 0 20px 50px rgba(30, 41, 59, 0.08);
 }
-
+ 
 .brand {
   display: flex;
   align-items: center;
   gap: 14px;
   margin-bottom: 42px;
 }
-
+ 
 .brand-icon {
   width: 48px;
   height: 48px;
@@ -40,39 +40,39 @@
   font-size: 24px;
   font-weight: 700;
 }
-
+ 
 .brand h1 {
   margin: 0;
   font-size: 24px;
   color: #111827;
 }
-
+ 
 .brand p {
   margin: 3px 0 0;
   font-size: 12px;
   color: #6b7280;
 }
-
+ 
 .login-header {
   margin-bottom: 28px;
 }
-
+ 
 .login-header h2 {
   margin: 0 0 8px;
   font-size: 28px;
   color: #111827;
 }
-
+ 
 .login-header p {
   margin: 0;
   color: #6b7280;
   font-size: 14px;
 }
-
+ 
 .form-group {
   margin-bottom: 20px;
 }
-
+ 
 .form-group label {
   display: block;
   margin-bottom: 8px;
@@ -80,7 +80,7 @@
   font-weight: 600;
   color: #374151;
 }
-
+ 
 .form-group input {
   width: 100%;
   box-sizing: border-box;
@@ -91,12 +91,12 @@
   outline: none;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
-
+ 
 .form-group input:focus {
   border-color: #2563eb;
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
-
+ 
 .primary-button {
   width: 100%;
   padding: 13px;
@@ -109,24 +109,24 @@
   font-weight: 600;
   cursor: pointer;
 }
-
+ 
 .primary-button:hover {
   background: #1d4ed8;
 }
-
+ 
 .signup-text {
   margin: 24px 0 0;
   text-align: center;
   font-size: 14px;
   color: #6b7280;
 }
-
+ 
 .signup-text span {
   color: #2563eb;
   font-weight: 600;
   cursor: pointer;
 }
-
+ 
 .error-message {
   margin-bottom: 20px;
   padding: 12px 14px;
@@ -136,7 +136,7 @@
   color: #b91c1c;
   font-size: 14px;
 }
-
+ 
 .attendance-actions {
   margin-bottom: 24px;
   padding: 22px 24px;
@@ -147,21 +147,21 @@
   align-items: center;
   justify-content: space-between;
 }
-
+ 
 .attendance-actions h3 {
   margin: 0 0 5px;
 }
-
+ 
 .attendance-actions p {
   margin: 0;
   color: #6b7280;
 }
-
+ 
 .attendance-buttons {
   display: flex;
   gap: 10px;
 }
-
+ 
 .checkin-button,
 .checkout-button {
   padding: 11px 18px;
@@ -171,21 +171,21 @@
   font-weight: 600;
   cursor: pointer;
 }
-
+ 
 .checkin-button {
   background: #16a34a;
 }
-
+ 
 .checkout-button {
   background: #dc2626;
 }
-
+ 
 .checkin-button:disabled,
 .checkout-button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
-
+ 
 .dashboard-message {
   margin-bottom: 20px;
   padding: 12px 16px;
@@ -194,11 +194,123 @@
   border-radius: 10px;
   color: #1d4ed8;
 }
-
+ 
 @media (max-width: 700px) {
   .attendance-actions {
     flex-direction: column;
     align-items: flex-start;
     gap: 18px;
+  }
+}
+/* =========================
+   PROFILE PAGE
+========================= */
+ 
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 30px;
+}
+ 
+.page h1 {
+  margin: 0 0 4px;
+  color: #111827;
+}
+ 
+.page > p {
+  margin: 0 0 24px;
+  color: #6b7280;
+}
+ 
+.card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 22px 24px;
+  margin-bottom: 20px;
+}
+ 
+.card h2 {
+  margin: 0 0 16px;
+  font-size: 16px;
+  color: #111827;
+}
+ 
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+ 
+.profile-edit-card {
+  grid-column: 1 / -1;
+}
+ 
+.profile-field {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 14px;
+}
+ 
+.profile-field:last-of-type {
+  border-bottom: none;
+}
+ 
+.profile-label {
+  color: #6b7280;
+  font-weight: 500;
+}
+ 
+.profile-net {
+  margin-top: 4px;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 14px;
+}
+ 
+.profile-net .salary {
+  font-weight: 700;
+  color: #16a34a;
+  font-size: 16px;
+}
+ 
+.profile-hint {
+  margin: 14px 0 0;
+  font-size: 12px;
+  color: #9ca3af;
+}
+ 
+.role-badge {
+  text-transform: capitalize;
+  background: #eff6ff;
+  color: #1d4ed8;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+ 
+.documents-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 14px;
+}
+ 
+.documents-list li {
+  padding: 8px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+ 
+.documents-list a {
+  color: #2563eb;
+  text-decoration: none;
+}
+ 
+@media (max-width: 800px) {
+  .profile-grid {
+    grid-template-columns: 1fr;
   }
 }
