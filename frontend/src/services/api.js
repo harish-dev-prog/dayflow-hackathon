@@ -80,3 +80,32 @@ export const leaveAPI = {
 export const payrollAPI = {
   getMe: () => request('/payroll/me'),
 };
+
+export const adminAPI = {
+  getEmployees: () => request('/admin/employees'),
+
+  getAttendance: (date) =>
+    request(`/attendance/all?date=${date}`),
+
+  getLeaves: (status = 'pending') =>
+    request(`/leave/all?status=${status}`),
+
+  approveLeave: (id, admin_comment = '') =>
+    request(`/leave/${id}/approve`, {
+      method: 'PATCH',
+      body: JSON.stringify({ admin_comment }),
+    }),
+
+  rejectLeave: (id, admin_comment = '') =>
+    request(`/leave/${id}/reject`, {
+      method: 'PATCH',
+      body: JSON.stringify({ admin_comment }),
+    }),
+
+  getPayroll: () =>
+    request('/payroll/all'),
+}
+
+export const adminAPI = {
+  getEmployees: () => request('/admin/employees'),
+};
