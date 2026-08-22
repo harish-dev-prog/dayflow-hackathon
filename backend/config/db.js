@@ -70,7 +70,23 @@ async function connectDB() {
     );
   `);
 
-  console.log("Connected to SQLite and ensured users + profiles + attendance tables exist");
+  await dbInstance.exec(`
+    CREATE TABLE IF NOT EXISTS leave_requests (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL,
+      leave_type TEXT NOT NULL CHECK(leave_type IN ('paid', 'sick', 'unpaid')),
+      start_date TEXT NOT NULL,
+      end_date TEXT NOT NULL,
+      remarks TEXT,
+      status TEXT NOT NULL CHECK(status IN ('pending', 'approved', 'rejected')) DEFAULT 'pending',
+      admin_comment TEXT,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    );
+  `);
+
+  console.log("Connected to SQLite and ensured users + profiles + attendance + leave_requests tables exist");
   return dbInstance;
 }
 
