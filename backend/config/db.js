@@ -28,7 +28,35 @@ async function connectDB() {
     );
   `);
 
-  console.log("Connected to SQLite and ensured users table exists");
+  await dbInstance.exec(`
+    CREATE TABLE IF NOT EXISTS profiles (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER UNIQUE NOT NULL,
+
+      -- Personal details (employee can edit)
+      phone TEXT,
+      address TEXT,
+      profile_picture TEXT,
+
+      -- Job details (admin only)
+      department TEXT,
+      designation TEXT,
+      date_of_joining TEXT,
+
+      -- Salary structure (admin only, employee views read-only via /me)
+      basic_salary REAL DEFAULT 0,
+      allowances REAL DEFAULT 0,
+      deductions REAL DEFAULT 0,
+
+      -- Documents (admin only) - comma-separated file names/URLs for hackathon scope
+      documents TEXT,
+
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    );
+  `);
+
+  console.log("Connected to SQLite and ensured users + profiles tables exist");
   return dbInstance;
 }
 

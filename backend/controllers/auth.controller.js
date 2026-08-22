@@ -43,6 +43,9 @@ async function signup(req, res) {
       [employee_id, name, email, password_hash, role, 0]
     );
 
+    // Create an empty profile row so /profile/me works immediately after signup
+    await db.run(`INSERT INTO profiles (user_id) VALUES (?)`, [result.lastID]);
+
     // NOTE: Real email verification (sending a link) is a stretch goal.
     // For the hackathon demo, is_verified defaults to 0 and can be
     // flipped via a simple "verify" endpoint or auto-verified below.
