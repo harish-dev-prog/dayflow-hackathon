@@ -427,3 +427,88 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ===== QUICK VISUAL POLISH — append only, doesn't touch existing rules ===== */
+ 
+body {
+  background: linear-gradient(135deg, #f5f7fb 0%, #eef1f8 100%);
+}
+ 
+.login-card, .card {
+  border-radius: 14px !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+ 
+.card:hover {
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12) !important;
+  transform: translateY(-2px);
+}
+ 
+.brand-icon {
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  color: white;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 20px;
+}
+ 
+.primary-button {
+  background: linear-gradient(135deg, #4f46e5, #6366f1) !important;
+  border: none !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+  transition: opacity 0.15s ease, transform 0.1s ease;
+}
+ 
+.primary-button:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+ 
+.role-badge {
+  background: #eef2ff;
+  color: #4f46e5;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+ 
+.error-message {
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 14px;
+}
+ 
+.dashboard-message {
+  background: #f0fdf4;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 14px;
+}
+ 
+nav {
+  background: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+ 
+nav a {
+  color: #4b5563;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.15s ease;
+}
+ 
+nav a:hover {
+  color: #4f46e5;
+}
