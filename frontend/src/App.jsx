@@ -1,6 +1,16 @@
 import { useState } from 'react'
-import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom'
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+  useNavigate,
+  Link,
+} from 'react-router-dom'
+
 import { authAPI } from './services/api'
+import EmployeeDashboard from './pages/EmployeeDashboard'
+import Leave from './pages/Leave'
 import './App.css'
 
 function Login() {
@@ -95,17 +105,6 @@ function Login() {
   )
 }
 
-function EmployeeDashboard() {
-  const user = JSON.parse(localStorage.getItem('dayflow_user') || '{}')
-
-  return (
-    <div style={{ padding: '40px' }}>
-      <h1>Welcome, {user.name || 'Employee'} 👋</h1>
-      <p>Employee Dashboard</p>
-    </div>
-  )
-}
-
 function AdminDashboard() {
   const user = JSON.parse(localStorage.getItem('dayflow_user') || '{}')
 
@@ -122,9 +121,19 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Navigate to="/login" replace />} />
+
         <Route path="/login" element={<Login />} />
+
         <Route path="/dashboard" element={<EmployeeDashboard />} />
+
+        <Route path="/leave" element={<Leave />} />
+
         <Route path="/admin" element={<AdminDashboard />} />
+
+        <Route
+          path="*"
+          element={<Navigate to="/login" replace />}
+        />
       </Routes>
     </BrowserRouter>
   )
