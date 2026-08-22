@@ -219,3 +219,33 @@ async function updateAttendanceStatus(req, res) {
       "SELECT * FROM attendance WHERE user_id = ? AND date = ?",
       [userId, date]
     );
+
+    if (existing) {
+      await db.run(
+        "UPDATE attendance SET status = ? WHERE id = ?",
+        [status, existing.id]
+      );
+    } else {
+      await db.run(
+        "INSERT INTO attendance (user_id, date, status) VALUES (?, ?, ?)",
+        [userId, date, status]
+      );
+    }
+
+    return res.status(200).json({
+      message: "Attendance status updated.",
+    });
+  } catch (err) {
+    console.error("Update attendance status error:", err);
+    return res.status(500).json({ message: "Something went wrong." });
+  }
+}
+
+module.exports = {
+  checkIn,
+  checkOut,
+  getMyAttendance,
+  getAllAttendance,
+  getAttendanceByUser,
+  updateAttendanceStatus,
+};

@@ -184,7 +184,9 @@ function EmployeeDashboard() {
               Apply Leave
             </Link>
  
-            <button>View Salary</button>
+            <Link to="/profile" className="action-link">
+  View Salary
+</Link>
           </div>
         </section>
       </main>
