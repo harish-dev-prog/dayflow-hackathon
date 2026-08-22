@@ -56,7 +56,21 @@ async function connectDB() {
     );
   `);
 
-  console.log("Connected to SQLite and ensured users + profiles tables exist");
+  await dbInstance.exec(`
+    CREATE TABLE IF NOT EXISTS attendance (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL,
+      date TEXT NOT NULL,               -- 'YYYY-MM-DD', one row per user per day
+      check_in TEXT,                    -- ISO timestamp
+      check_out TEXT,                   -- ISO timestamp
+      status TEXT NOT NULL CHECK(status IN ('present', 'absent', 'half-day', 'leave')) DEFAULT 'present',
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+      UNIQUE(user_id, date)
+    );
+  `);
+
+  console.log("Connected to SQLite and ensured users + profiles + attendance tables exist");
   return dbInstance;
 }
 
